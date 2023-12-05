@@ -6,6 +6,7 @@ package com.mycompany.lojapedacospizza.controle;
 
 import com.mycompany.lojapedacospizza.core.Desenho;
 import com.mycompany.lojapedacospizza.core.ClienteLogic;
+import com.mycompany.lojapedacospizza.core.GerenciadorClientes;
 import com.mycompany.lojapedacospizza.core.LojaLogic;
 import com.mycompany.lojapedacospizza.view.LojaFXMLController;
 import com.mycompany.lojapedacospizza.core.Mesa;
@@ -24,14 +25,9 @@ public class LojaController {
     
     private LojaFXMLController lojaFXMLController;
     private LojaLogic lojaLogic;
-    
-    private HashMap<String, ClienteLogic> clientesPorNome = new HashMap<>();
-    private List<ClienteLogic> clientesLogic = new ArrayList<>();
-    private List<Cliente> clientes = new ArrayList<>();
-    
-    private String clienteAtual;
     private Desenho desenho;
     private Mesa mesa;
+    private GerenciadorClientes gerenciadorClientes;
     
     public synchronized static LojaController getInstancia() {
         if(lojaController == null) {
@@ -44,15 +40,7 @@ public class LojaController {
     }
     
     public void adicionarClienteLogic(String nome) {
-        if(clientesLogic.isEmpty()) {
-            clienteAtual = nome;
-        }
-        
-        int y = (clientesLogic.size() + 2) * 30;
-        ClienteLogic clienteLogic = new ClienteLogic(nome, 30, y);
-        clientes.add(clienteLogic.getCliente());
-        clientesLogic.add(clienteLogic);
-        clientesPorNome.put(nome, clienteLogic);
+        gerenciadorClientes.adicionarClienteLogic(nome);
     }
     
     public void setMesa(Mesa mesa) {
@@ -72,7 +60,11 @@ public class LojaController {
     }
     
     public void setClienteAtual(String clienteAtual) {
-        this.clienteAtual = clienteAtual;
+        gerenciadorClientes.setClienteAtual(clienteAtual);
+    }
+    
+    public void setGerenciadorClientes(GerenciadorClientes gerenciadorClientes) {
+        this.gerenciadorClientes = gerenciadorClientes;
     }
     
     public void notificarCozinhando() {
@@ -84,14 +76,14 @@ public class LojaController {
     }
     
     public void clienteSolicitarPizza(int quantidadeSolicitada, String tipoPizza) {
-        ClienteLogic clienteLogic = clientesPorNome.get(clienteAtual);
+        ClienteLogic clienteLogic = gerenciadorClientes.getClienteLogicAtual();
         
         clienteLogic.clienteSolicitarPizza(quantidadeSolicitada, tipoPizza);
     }
     
     public void entregarPizza(String tipoPizza, int pedacos, int pedacosRestantes) {
         desenho.atualizarPizzas(tipoPizza, pedacos, pedacosRestantes);
-        ClienteLogic clienteLogic = clientesPorNome.get(clienteAtual);
+        ClienteLogic clienteLogic = gerenciadorClientes.getClienteLogicAtual();
         
         
         lojaFXMLController.entregarPizza(tipoPizza, pedacos);
@@ -99,18 +91,19 @@ public class LojaController {
 
     public void viewFechada() {
         mesa.viewFechada();
+        gerenciadorClientes.pararClientes();
     }
 
     public void keyPressed(String keyCode) {
-        clientesPorNome.get(clienteAtual).keyPressed(keyCode);
+        gerenciadorClientes.getClienteLogicAtual().keyPressed(keyCode);
     }
 
     public Cliente getCliente() {
-        return clientesPorNome.get(clienteAtual).getCliente();
+        return gerenciadorClientes.getClienteAtual();
     }
     
     public List<Cliente> getClientes() {
-        return clientes;
+        return gerenciadorClientes.getClientes();
     }
 
     public void desenharCliente(Cliente cliente) {
@@ -138,7 +131,7 @@ public class LojaController {
     }
     
     public boolean checarMostrarBalao() {
-        return clientesPorNome.get(clienteAtual).checarMostrarBalao();
+        return gerenciadorClientes.getClienteLogicAtual().checarMostrarBalao();
     }
 
     public int getCanvasAltura() {
@@ -154,7 +147,7 @@ public class LojaController {
     }
 
     public boolean nomeExiste(String nome) {
-        return clientesPorNome.containsKey(nome);
+        return gerenciadorClientes.nomeExiste(nome);
     }
     
     public void desabilitarPedir() {

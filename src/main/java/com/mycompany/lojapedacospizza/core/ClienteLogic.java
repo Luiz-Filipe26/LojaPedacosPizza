@@ -17,9 +17,10 @@ import java.util.logging.Logger;
 public class ClienteLogic extends Thread {
     private String direcao;
     private Cliente cliente;
+    private boolean parar = false;
     private LojaController lojaController;
     
-    public Object lock = new Object();
+    public final Object lock = new Object();
     
     private final int limiteX = 240;
     private static final int unidadeLargura = 30;
@@ -36,8 +37,9 @@ public class ClienteLogic extends Thread {
     public Cliente getCliente() {
         return cliente;
     }
-    public void solicitarMesa(int quantidadeSolicitada, String tipoPizza) {
-        
+    
+    public void parar() {
+        parar = true;
         synchronized(lock) {
             lock.notify();
         }
@@ -70,13 +72,19 @@ public class ClienteLogic extends Thread {
     public void clienteSolicitarPizza(int quantidade, String tipoPizza) {
         this.quantidade = quantidade;
         this.tipoPizza = tipoPizza;
-        start();
+        synchronized(lock) {
+            lock.notify();
+        }
     }
     
     @Override
     public void run() {
         
         while(true) {
+            esperar();
+            if(parar) {
+                break;
+            }
             try {
                 Mesa.cozinhando.acquire();
             } catch (InterruptedException ex) {
@@ -86,7 +94,6 @@ public class ClienteLogic extends Thread {
             Mesa.cozinhando.release();
 
             lojaController.solicitarMesa(quantidade, tipoPizza);
-            esperar();
         }
     }
     

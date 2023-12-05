@@ -3,6 +3,7 @@ package com.mycompany.lojapedacospizza.controle;
 import com.mycompany.lojapedacospizza.core.Cozinheiro;
 import com.mycompany.lojapedacospizza.core.Desenho;
 import com.mycompany.lojapedacospizza.core.ClienteLogic;
+import com.mycompany.lojapedacospizza.core.GerenciadorClientes;
 import com.mycompany.lojapedacospizza.core.LojaLogic;
 import com.mycompany.lojapedacospizza.core.Mesa;
 import com.mycompany.lojapedacospizza.view.LojaFXMLController;
@@ -42,6 +43,9 @@ public class App extends Application {
         mesa.start();
         lojaController.setMesa(mesa);
         
+        GerenciadorClientes gerenciadorClientes = new GerenciadorClientes();
+        lojaController.setGerenciadorClientes(gerenciadorClientes);
+        
         Canvas canvas = (Canvas) root.lookup("#canvasGrafico");
         GraphicsContext gc = canvas.getGraphicsContext2D();
         Desenho desenho = Desenho.getInstancia(gc);
@@ -50,6 +54,7 @@ public class App extends Application {
         LojaLogic lojaLogic = new LojaLogic();
         lojaController.setLojaLogic(lojaLogic);
         
+       
         Scene scene = new Scene(root);
         stage.setScene(scene);
         

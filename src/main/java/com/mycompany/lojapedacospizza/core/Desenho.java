@@ -10,9 +10,13 @@ import com.mycompany.lojapedacospizza.objetos.Cliente;
 import com.mycompany.lojapedacospizza.objetos.Ponto;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -77,11 +81,13 @@ public class Desenho {
         pontosPizza.put("Pizza Margherita", primeiroPonto.add(0, -120));
         pontosPizza.put("Pizza Portuguesa", primeiroPonto.add(0, -180));
         
-        for(int i=1; i<=8; i++) {
-            Image imagem = new Image(getClass().getResourceAsStream("/pizza" + i + ".png"));
-            Image imagemRedimensionada = redimensionarImagem(imagem, 50, 50);
+        Image imagemTotal = new Image(getClass().getResourceAsStream("/pizza_sprites.png"));
+        
+        for(int i=0; i<8; i++) {
+            Image subImagem = cortarImagem(imagemTotal, (i % 3) * 512, (i/3) * 512, 512, 512);
+            Image imagemRedimensionada = redimensionarImagem(subImagem, 50, 50);
             
-            pedacosImagem.put(i, imagemRedimensionada);
+            pedacosImagem.put(i+1, imagemRedimensionada);
         }
         
         pontosPizza.forEach((tipoPizza, v) -> {
@@ -119,11 +125,10 @@ public class Desenho {
         }
     }
     
-    public void desenharPizza(String tipoPizza, int pedacosRestante) {
-        Ponto pontoPizza = pontosPizza.get(tipoPizza);
-        Image imagemPizza = pedacosImagem.get(pedacosRestante);
-        
-        gc.drawImage(imagemPizza, pontoPizza.x, pontoPizza.y);
+    private Image cortarImagem(Image imagemOriginal, int x, int y, int dx, int dy) {
+        PixelReader pixelReader = imagemOriginal.getPixelReader();
+        Image imagemCortada = new WritableImage(pixelReader, x, y, dx, dy);
+        return imagemCortada;
     }
     
     private Image redimensionarImagem(Image imagemOriginal, double novaLargura, double novaAltura) {
@@ -153,6 +158,13 @@ public class Desenho {
         int y2Clique = y1Clique + 30;
         
         balaoArea = new Area(x1Clique, y1Clique, x2Clique, y2Clique);
+    }
+    
+    public void desenharPizza(String tipoPizza, int pedacosRestante) {
+        Ponto pontoPizza = pontosPizza.get(tipoPizza);
+        Image imagemPizza = pedacosImagem.get(pedacosRestante);
+        
+        gc.drawImage(imagemPizza, pontoPizza.x, pontoPizza.y);
     }
 
     public void atualizarPizzas(String tipo, int pedacos, int pedacosRestantes) {
