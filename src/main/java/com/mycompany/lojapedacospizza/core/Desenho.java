@@ -14,6 +14,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
 /**
  *
@@ -52,17 +54,19 @@ public class Desenho {
         clienteImg = new Image(getClass().getResourceAsStream("/client.png"));
         balaoImg = new Image(getClass().getResourceAsStream("/balao.png"));
         
-        
         this.gc = gc;
         
         largura = gc.getCanvas().getWidth();
         altura = gc.getCanvas().getHeight();
         
-        gc.setFill(Color.WHITE);
-        gc.fillRect(0, 0, largura, altura);
-        
+        limparTela();
         inicializarColecoes();
         desenharTela();
+    }
+    
+    public void limparTela() {
+        gc.setFill(Color.WHITE);
+        gc.fillRect(0, 0, largura, altura);
     }
     
     public void inicializarColecoes() {
@@ -96,19 +100,22 @@ public class Desenho {
         if(clientes.isEmpty()) {
             return;
         }
-        Cliente cliente = lojaController.getCliente();
+        Cliente clienteAtual = lojaController.getCliente();
         
-        gc.setFill(Color.BLUE);
-        for(Cliente c : clientes) {
-            gc.fillRect(10, altura - (c.y + clienteImg.getHeight() / 2), 20, 20);
+        gc.setFont(Font.font("Segoe UI", FontWeight.BOLD, 20));
+        for(Cliente cliente : clientes) {
+            gc.setFill(Color.BLUE);
+            gc.fillRect(10, altura - (cliente.y + clienteImg.getHeight() / 2), 20, 20);
+            gc.setFill(Color.BLACK);
+            gc.fillText(cliente.nome, 6, altura - (cliente.y + clienteImg.getHeight() / 2) + 25);
         }
         
-        gc.drawImage(clienteImg, cliente.x, altura - cliente.y - clienteImg.getHeight());
+        gc.drawImage(clienteImg, clienteAtual.x, altura - clienteAtual.y - clienteImg.getHeight());
         
         
         boolean mostrar = lojaController.checarMostrarBalao();
         if(mostrar) {
-            balaoPedir(cliente);
+            balaoPedir(clienteAtual);
         }
     }
     
@@ -135,6 +142,7 @@ public class Desenho {
         double y = (altura - cliente.y) - clienteImg.getHeight() - balaoImg.getHeight();
         
         gc.drawImage(balaoImg, x, y);
+        gc.setFont(new Font(14));
         gc.setFill(Color.BLACK);
         gc.fillText("Pedir", (x + balaoImg.getWidth() / 2) - 15, (y + balaoImg.getWidth() / 2));
         
@@ -147,39 +155,20 @@ public class Desenho {
         balaoArea = new Area(x1Clique, y1Clique, x2Clique, y2Clique);
     }
 
-    public void mouseClique(int x, int y) {
-        List<Cliente> clientes = lojaController.getClientes();
-        String clienteAtual = clienteClicado(clientes, x, y);
-        
-        if(clienteAtual != null) {
-            lojaController.setClienteAtual(clienteAtual);
-        }
-        else if(isBalaoClique(x, y)) {
-            lojaController.habilitarPedir();
-        }
-        
-        desenharTela();
-    }
-    
-    public String clienteClicado(List<Cliente> clientes, int x, int y) {
-        for(Cliente cliente : clientes) {
-            double x1 = 10;
-            double y1 = altura - (cliente.y + clienteImg.getHeight() / 2);
-            double x2 = x1 + 20;
-            double y2 = y1 + 20;
-            
-            if(x >= x1 && x <= x2 && y >= y1 && y <= y2) {
-                return cliente.nome;
-            }
-        }
-        return null;
-    }
-    
-    public boolean isBalaoClique(int x, int y) {
-        return balaoArea != null && x >= balaoArea.x1 && x <= balaoArea.x2 && y >= balaoArea.y1 && y<=balaoArea.y2;
-    }
-
     public void atualizarPizzas(String tipo, int pedacos, int pedacosRestantes) {
         desenharPizza(tipo, pedacosRestantes);
     }
+
+    public int getCanvasAltura() {
+        return (int) altura;
+    }
+
+    public int getClienteAltura() {
+        return (int) clienteImg.getHeight();
+    }
+
+    public Area getBalaoArea() {
+        return balaoArea;
+    }
+    
 }

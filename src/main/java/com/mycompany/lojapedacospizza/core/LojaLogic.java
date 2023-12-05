@@ -1,55 +1,55 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.mycompany.lojapedacospizza.core;
 
 import com.mycompany.lojapedacospizza.controle.LojaController;
+import com.mycompany.lojapedacospizza.objetos.Area;
 import com.mycompany.lojapedacospizza.objetos.Cliente;
+import java.util.List;
 
-/**
- *
- * @author Luiz
- */
-public class LojaLogic extends Thread {
-    private String direcao;
-    private Cliente cliente;
-    private LojaController lojaController;
+
+public class LojaLogic {
     
-    private final int limiteX = 240;
-    private static final int unidadeLargura = 30;
+    LojaController lojaController;
+    private final int altura;
+    private final int clienteAltura;
     
     public LojaLogic() {
-        cliente = new Cliente("Cliente 1", 30, 30);
         lojaController = LojaController.getInstancia();
+        altura = lojaController.getCanvasAltura();
+        clienteAltura = lojaController.getClienteAltura();
     }
     
-    public Cliente getCliente() {
-        return cliente;
-    }
-    
-    public void keyPressed(String keyCode) {
+    public void mouseClique(int x, int y) {
+        List<Cliente> clientes = lojaController.getClientes();
+        String clienteAtual = clienteClicado(clientes, x, y);
         
-        if(keyCode.equals("RIGHT")) {
-            if(cliente.x + unidadeLargura <= limiteX) {
-                cliente.x += unidadeLargura;
+        if(clienteAtual != null) {
+            lojaController.setClienteAtual(clienteAtual);
+            lojaController.desenharTela();
+            lojaController.desabilitarPedir();
+        }
+        else if(isBalaoClique(x, y)) {
+            lojaController.habilitarPedir();
+            lojaController.desenharTela();
+        }
+    }
+    
+    public String clienteClicado(List<Cliente> clientes, int x, int y) {
+        for(Cliente cliente : clientes) {
+            double x1 = 10;
+            double y1 = altura - (cliente.y + clienteAltura / 2);
+            double x2 = x1 + 20;
+            double y2 = y1 + 20;
+            
+            if(x >= x1 && x <= x2 && y >= y1 && y <= y2) {
+                return cliente.nome;
             }
         }
-        else {
-            if(cliente.x - unidadeLargura >= unidadeLargura) {
-                cliente.x -= unidadeLargura;
-            }
-        }
-        
-        lojaController.desenharCliente(cliente);
-        
-        if(cliente.x == limiteX) {
-            lojaController.balaoPedir(cliente);
-        }
+        return null;
     }
     
-    @Override
-    public void run() {
-        
+    public boolean isBalaoClique(int x, int y) {
+        Area balaoArea = lojaController.getBalaoArea();
+        return balaoArea != null && x >= balaoArea.x1 && x <= balaoArea.x2 && y >= balaoArea.y1 && y<=balaoArea.y2;
     }
 }

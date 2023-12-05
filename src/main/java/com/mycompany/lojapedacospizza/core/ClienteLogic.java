@@ -18,7 +18,6 @@ public class ClienteLogic extends Thread {
     private String direcao;
     private Cliente cliente;
     private LojaController lojaController;
-    Pizza pizzaCliente;
     
     public Object lock = new Object();
     
@@ -78,7 +77,6 @@ public class ClienteLogic extends Thread {
     public void run() {
         
         while(true) {
-            esperar();
             try {
                 Mesa.cozinhando.acquire();
             } catch (InterruptedException ex) {
@@ -88,6 +86,7 @@ public class ClienteLogic extends Thread {
             Mesa.cozinhando.release();
 
             lojaController.solicitarMesa(quantidade, tipoPizza);
+            esperar();
         }
     }
     

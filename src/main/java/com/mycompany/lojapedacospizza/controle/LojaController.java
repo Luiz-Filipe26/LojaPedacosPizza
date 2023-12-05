@@ -6,8 +6,10 @@ package com.mycompany.lojapedacospizza.controle;
 
 import com.mycompany.lojapedacospizza.core.Desenho;
 import com.mycompany.lojapedacospizza.core.ClienteLogic;
+import com.mycompany.lojapedacospizza.core.LojaLogic;
 import com.mycompany.lojapedacospizza.view.LojaFXMLController;
 import com.mycompany.lojapedacospizza.core.Mesa;
+import com.mycompany.lojapedacospizza.objetos.Area;
 import com.mycompany.lojapedacospizza.objetos.Cliente;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,11 +22,13 @@ import java.util.List;
 public class LojaController {
     private static LojaController lojaController;
     
+    private LojaFXMLController lojaFXMLController;
+    private LojaLogic lojaLogic;
+    
     private HashMap<String, ClienteLogic> clientesPorNome = new HashMap<>();
     private List<ClienteLogic> clientesLogic = new ArrayList<>();
     private List<Cliente> clientes = new ArrayList<>();
     
-    private LojaFXMLController lojaFXMLController;
     private String clienteAtual;
     private Desenho desenho;
     private Mesa mesa;
@@ -61,6 +65,10 @@ public class LojaController {
     
     public void setFXMLController(LojaFXMLController lojaFXMLController) {
         this.lojaFXMLController = lojaFXMLController;
+    }
+    
+    public void setLojaLogic(LojaLogic lojaLogic) {
+        this.lojaLogic = lojaLogic;
     }
     
     public void setClienteAtual(String clienteAtual) {
@@ -118,7 +126,11 @@ public class LojaController {
     }
 
     public void mouseClique(int x, int y) {
-        desenho.mouseClique(x, y);
+        lojaLogic.mouseClique(x, y);
+    }
+    
+    public void desenharTela() {
+        desenho.desenharTela();
     }
 
     public void habilitarPedir() {
@@ -127,5 +139,25 @@ public class LojaController {
     
     public boolean checarMostrarBalao() {
         return clientesPorNome.get(clienteAtual).checarMostrarBalao();
+    }
+
+    public int getCanvasAltura() {
+        return desenho.getCanvasAltura();
+    }
+    
+    public int getClienteAltura() {
+        return desenho.getClienteAltura();
+    }
+    
+    public Area getBalaoArea() {
+        return desenho.getBalaoArea();
+    }
+
+    public boolean nomeExiste(String nome) {
+        return clientesPorNome.containsKey(nome);
+    }
+    
+    public void desabilitarPedir() {
+        lojaFXMLController.desabilitarPedir();
     }
 }

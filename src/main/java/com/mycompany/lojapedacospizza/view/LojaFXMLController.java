@@ -50,6 +50,9 @@ public class LojaFXMLController implements Initializable {
             labelConsole.setText("Escolha valores válidos para pedir.");
             return;
         }
+        
+        comboBoxTipoPizza.setVisible(false);
+        comboBoxQuantidade.setVisible(false);
         buttonPedir.setVisible(false);
         int quantidade = Integer.parseInt(comboBoxQuantidade.getValue());
         String pizza = comboBoxTipoPizza.getValue();
@@ -63,8 +66,22 @@ public class LojaFXMLController implements Initializable {
     
     @FXML
     public void adicionarPressionado(ActionEvent event) {
-        lojaController.adicionarClienteLogic(textFieldNome.getText());
-        lojaController.desenharCliente(textFieldNome.getText());
+        String nome = textFieldNome.getText();
+        
+        if(nome.isBlank()) {
+            labelConsole.setText("Digite um nome!");
+            return;
+        }
+        
+        if(lojaController.nomeExiste(nome)) {
+            labelConsole.setText("Nome já existe!");
+            return;
+        }
+        
+        labelConsole.setText("");
+        textFieldNome.setText("");
+        lojaController.adicionarClienteLogic(nome);
+        lojaController.desenharCliente(nome);
     }
     
     
@@ -74,8 +91,20 @@ public class LojaFXMLController implements Initializable {
     }
     
     public void habilitarPedir() {
+        comboBoxTipoPizza.setVisible(true);
+        comboBoxQuantidade.setVisible(true);
+        
         Platform.runLater(() -> {
             buttonPedir.setVisible(true);
+        });
+    }
+    
+    public void desabilitarPedir() {
+        comboBoxTipoPizza.setVisible(false);
+        comboBoxQuantidade.setVisible(false);
+        
+        Platform.runLater(() -> {
+            buttonPedir.setVisible(false);
         });
     }
     
@@ -103,5 +132,8 @@ public class LojaFXMLController implements Initializable {
         
         comboBoxTipoPizza.setItems(listaPizza);
         comboBoxQuantidade.setItems(listaQuantidade);
+        
+        comboBoxTipoPizza.setVisible(false);
+        comboBoxQuantidade.setVisible(false);
     }
 }

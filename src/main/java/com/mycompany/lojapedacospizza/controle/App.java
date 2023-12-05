@@ -3,6 +3,7 @@ package com.mycompany.lojapedacospizza.controle;
 import com.mycompany.lojapedacospizza.core.Cozinheiro;
 import com.mycompany.lojapedacospizza.core.Desenho;
 import com.mycompany.lojapedacospizza.core.ClienteLogic;
+import com.mycompany.lojapedacospizza.core.LojaLogic;
 import com.mycompany.lojapedacospizza.core.Mesa;
 import com.mycompany.lojapedacospizza.view.LojaFXMLController;
 
@@ -31,18 +32,23 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/LojaView.fxml"));
         Parent root = fxmlLoader.load();
-        LojaFXMLController lojaFXMLController = fxmlLoader.getController();
-        
-        LojaController.getInstancia().setFXMLController(lojaFXMLController);
         
         lojaController = LojaController.getInstancia();
+        
+        LojaFXMLController lojaFXMLController = fxmlLoader.getController();
+        lojaController.setFXMLController(lojaFXMLController);
+        
         Mesa mesa = new Mesa(Cozinheiro.getInstancia());
         mesa.start();
-        lojaController.getInstancia().setMesa(mesa);
+        lojaController.setMesa(mesa);
+        
         Canvas canvas = (Canvas) root.lookup("#canvasGrafico");
         GraphicsContext gc = canvas.getGraphicsContext2D();
         Desenho desenho = Desenho.getInstancia(gc);
         lojaController.setDesenho(desenho);
+        
+        LojaLogic lojaLogic = new LojaLogic();
+        lojaController.setLojaLogic(lojaLogic);
         
         Scene scene = new Scene(root);
         stage.setScene(scene);
