@@ -75,7 +75,7 @@ public class Desenho {
     
     public void inicializarColecoes() {
         
-        Ponto primeiroPonto = new Ponto(380, (int) altura - 80);
+        Ponto primeiroPonto = new Ponto(360, (int) altura - 80);
         pontosPizza.put("Pizza de Calabresa", primeiroPonto);
         pontosPizza.put("Pizza de Frango com Catupiry", primeiroPonto.add(0, -60));
         pontosPizza.put("Pizza Margherita", primeiroPonto.add(0, -120));
@@ -89,24 +89,44 @@ public class Desenho {
             
             pedacosImagem.put(i+1, imagemRedimensionada);
         }
+    }
+    
+    public void desenharTela() {
+        
+        limparAreaClientes();
+        desenharMesa();
         
         pontosPizza.forEach((tipoPizza, v) -> {
             desenharPizza(tipoPizza, 8);
         });
-    }
-    
-    public void desenharTela() {
-        gc.setFill(Color.WHITE);
-        gc.fillRect(0, 0, 350, altura);
-        
-        gc.setFill(Color.YELLOW);
-        gc.fillRect(320, 30, 30, altura - 60);
         
         List<Cliente> clientes = lojaController.getClientes();
         if(clientes.isEmpty()) {
             return;
         }
+        
+        desenharSelecoesCliente(clientes);
+        
         Cliente clienteAtual = lojaController.getCliente();
+        gc.drawImage(clienteImg, clienteAtual.x, altura - clienteAtual.y - clienteImg.getHeight());
+        
+        boolean mostrar = lojaController.checarMostrarBalao();
+        if(mostrar) {
+            balaoPedir();
+        }
+    }
+    
+    public void limparAreaClientes() {
+        gc.setFill(Color.WHITE);
+        gc.fillRect(0, 0, 350, altura);
+    }
+    
+    public void desenharMesa() {
+        gc.setFill(Color.YELLOW);
+        gc.fillRect(320, 30, 30, altura - 60);
+    }
+    
+    public void desenharSelecoesCliente(List<Cliente> clientes) {
         
         gc.setFont(Font.font("Segoe UI", FontWeight.BOLD, 20));
         for(Cliente cliente : clientes) {
@@ -115,14 +135,7 @@ public class Desenho {
             gc.setFill(Color.BLACK);
             gc.fillText(cliente.nome, 6, altura - (cliente.y + clienteImg.getHeight() / 2) + 25);
         }
-        
-        gc.drawImage(clienteImg, clienteAtual.x, altura - clienteAtual.y - clienteImg.getHeight());
-        
-        
-        boolean mostrar = lojaController.checarMostrarBalao();
-        if(mostrar) {
-            balaoPedir(clienteAtual);
-        }
+        gc.setFont(new Font(14));
     }
     
     private Image cortarImagem(Image imagemOriginal, int x, int y, int dx, int dy) {
@@ -142,12 +155,12 @@ public class Desenho {
         return imagemRedimensionada;
     }
 
-    public void balaoPedir(Cliente cliente) {
+    public void balaoPedir() {
+        Cliente cliente = lojaController.getCliente();
         double x = cliente.x + 20;
         double y = (altura - cliente.y) - clienteImg.getHeight() - balaoImg.getHeight();
         
         gc.drawImage(balaoImg, x, y);
-        gc.setFont(new Font(14));
         gc.setFill(Color.BLACK);
         gc.fillText("Pedir", (x + balaoImg.getWidth() / 2) - 15, (y + balaoImg.getWidth() / 2));
         
@@ -165,6 +178,32 @@ public class Desenho {
         Image imagemPizza = pedacosImagem.get(pedacosRestante);
         
         gc.drawImage(imagemPizza, pontoPizza.x, pontoPizza.y);
+        
+        String textoPizza[] =  tipoPizza.split(" ");
+        String textoPizza1 = "", textoPizza2 = "", textoPizza3 = "";
+        
+        switch (textoPizza.length) {
+            case 2:
+                textoPizza1 = textoPizza[0];
+                textoPizza2 = textoPizza[1];
+                break;
+            case 3:
+                textoPizza1 = textoPizza[0] + " " + textoPizza[1];
+                textoPizza2 = textoPizza[2];
+                break;
+            default:
+                textoPizza1 = textoPizza[0] + " " + textoPizza[1];
+                textoPizza2 = textoPizza[2] + " " + textoPizza[3];
+                textoPizza3 = textoPizza[4];
+                break;
+        }
+        
+        gc.setFill(Color.BLACK);
+        gc.fillText(textoPizza1, pontoPizza.x + imagemPizza.getWidth(), pontoPizza.y + 20);
+        gc.fillText(textoPizza2, pontoPizza.x + imagemPizza.getWidth(), pontoPizza.y + 40);
+        if(!textoPizza3.isEmpty()) {
+            gc.fillText(textoPizza3, pontoPizza.x + imagemPizza.getWidth(), pontoPizza.y + 60);
+        }
     }
 
     public void atualizarPizzas(String tipo, int pedacos, int pedacosRestantes) {

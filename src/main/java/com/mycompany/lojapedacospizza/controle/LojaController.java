@@ -114,8 +114,8 @@ public class LojaController {
         desenho.desenharTela();
     }
 
-    public void balaoPedir(Cliente cliente) {
-        desenho.balaoPedir(cliente);
+    public void balaoPedir() {
+        desenho.balaoPedir();
     }
 
     public void mouseClique(int x, int y) {
