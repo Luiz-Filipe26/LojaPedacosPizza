@@ -4,15 +4,9 @@
  */
 package com.mycompany.lojapedacospizza.controle;
 
-import com.mycompany.lojapedacospizza.core.Desenho;
-import com.mycompany.lojapedacospizza.core.ClienteLogic;
-import com.mycompany.lojapedacospizza.core.Cozinheiro;
-import com.mycompany.lojapedacospizza.core.LojaLogic;
-import com.mycompany.lojapedacospizza.view.LojaFXMLController;
-import com.mycompany.lojapedacospizza.core.Mesa;
-import com.mycompany.lojapedacospizza.objetos.Area;
-import com.mycompany.lojapedacospizza.objetos.Cliente;
-import com.mycompany.lojapedacospizza.objetos.Pizza;
+import com.mycompany.lojapedacospizza.core.*;
+import com.mycompany.lojapedacospizza.objetos.*;
+import com.mycompany.lojapedacospizza.view.*;
 import java.util.List;
 
 /**
@@ -102,6 +96,10 @@ public class LojaController {
 
     public void keyPressed(String keyCode) {
         gerenciadorClientes.getClienteLogicAtual().keyPressed(keyCode);
+    }
+    
+    public void setHorario(int horas, int minutos) {
+        lojaFXMLController.setHorario(horas, minutos);
     }
 
     public Cliente getCliente() {

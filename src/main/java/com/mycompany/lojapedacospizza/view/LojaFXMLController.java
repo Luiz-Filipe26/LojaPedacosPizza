@@ -36,6 +36,9 @@ public class LojaFXMLController implements Initializable {
 
     @FXML
     private Label labelConsole;
+
+    @FXML
+    private Label labelRelogio;
     
     @FXML
     private TextField textFieldNome;
@@ -87,6 +90,10 @@ public class LojaFXMLController implements Initializable {
     @FXML
     public void focarTeclado(MouseEvent event) {
         anchorPane.requestFocus();
+    }
+    
+    public void setHorario(int horas, int minutos) {
+        labelRelogio.setText(horas + ":" + minutos);
     }
     
     public void habilitarPedir() {

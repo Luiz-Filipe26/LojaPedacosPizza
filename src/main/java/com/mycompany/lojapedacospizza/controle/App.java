@@ -31,7 +31,17 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/LojaView.fxml"));
         Parent root = fxmlLoader.load();
+       
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
         
+        criarObjetos(root, fxmlLoader);
+        criarListeners(stage, scene);
+        
+        stage.show();
+    }
+    
+    public void criarObjetos(Parent root, FXMLLoader fxmlLoader) {
         LojaFXMLController lojaFXMLController = fxmlLoader.getController();
         lojaController.setFXMLController(lojaFXMLController);
         
@@ -53,14 +63,6 @@ public class App extends Application {
         
         LojaLogic lojaLogic = new LojaLogic();
         lojaController.setLojaLogic(lojaLogic);
-        
-       
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        
-        criarListeners(stage, scene);
-        
-        stage.show();
     }
 
     public void criarListeners(Stage stage, Scene scene) {

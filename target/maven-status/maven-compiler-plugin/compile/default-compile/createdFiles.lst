@@ -3,7 +3,6 @@ com\mycompany\lojapedacospizza\objetos\Area.class
 com\mycompany\lojapedacospizza\objetos\Ponto.class
 com\mycompany\lojapedacospizza\controle\LojaController.class
 com\mycompany\lojapedacospizza\objetos\PizzaMargherita.class
-com\mycompany\lojapedacospizza\core\GerenciadorClientes.class
 com\mycompany\lojapedacospizza\controle\App$1.class
 com\mycompany\lojapedacospizza\core\LojaLogic.class
 com\mycompany\lojapedacospizza\objetos\PizzaCalabresa.class
@@ -14,6 +13,7 @@ com\mycompany\lojapedacospizza\core\Mesa.class
 com\mycompany\lojapedacospizza\objetos\Cliente.class
 com\mycompany\lojapedacospizza\objetos\PizzaFrangoCatupiry.class
 com\mycompany\lojapedacospizza\core\Desenho.class
+com\mycompany\lojapedacospizza\controle\GerenciadorClientes.class
 com\mycompany\lojapedacospizza\controle\Main.class
 com\mycompany\lojapedacospizza\view\LojaFXMLController.class
 com\mycompany\lojapedacospizza\objetos\Pizza.class

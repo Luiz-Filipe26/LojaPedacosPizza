@@ -5,6 +5,7 @@ import com.mycompany.lojapedacospizza.controle.LojaController;
 import com.mycompany.lojapedacospizza.objetos.Area;
 import com.mycompany.lojapedacospizza.objetos.Cliente;
 import java.util.List;
+import javafx.animation.AnimationTimer;
 
 
 public class LojaLogic {
@@ -16,6 +17,26 @@ public class LojaLogic {
     public LojaLogic() {
         altura = lojaController.getCanvasAltura();
         clienteAltura = lojaController.getClienteAltura();
+        avancarhorario();
+    }
+    
+    public void avancarhorario() {
+//        new AnimationTimer() {
+//            long duracaoNano = (long) (duracao * 1e9);
+//            long tempoInicio = -1;
+//            
+//
+//            @Override
+//            public void handle(long now) {
+//                if (tempoInicio < 0) {
+//                    tempoInicio = now;
+//                }
+//
+//                double progresso = (now - tempoInicio) / duracaoNano;
+//
+//                
+//            }
+//        }.start();
     }
     
     public void mouseClique(int x, int y) {

@@ -60,6 +60,7 @@ public class Cozinheiro extends Thread {
             }
             
             try {
+               // Thread.sleep(10000000);
                 Thread.sleep(2000 * quantidadeCozinhar);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Cozinheiro.class.getName()).log(Level.SEVERE, null, ex);

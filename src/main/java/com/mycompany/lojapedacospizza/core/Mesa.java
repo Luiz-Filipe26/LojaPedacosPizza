@@ -109,6 +109,9 @@ public class Mesa extends Thread {
         String tipo = pizza.getTipo();
         int pedacosRestantes = pizza.getPedacosRestantes();
         
+        //mesaEsperandoCozinhar.release();
+        //System.out.println(mesaEsperandoCozinhar.availablePermits());
+        
         lojaController.entregarPizza(nome, tipo, pedacos, pedacosRestantes);
     }
     
