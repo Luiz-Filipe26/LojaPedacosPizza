@@ -5,8 +5,11 @@
 package com.mycompany.lojapedacospizza.core;
 
 import com.mycompany.lojapedacospizza.controle.LojaController;
-import com.mycompany.lojapedacospizza.objetos.Cliente;
-import com.mycompany.lojapedacospizza.objetos.Pizza;
+import com.mycompany.lojapedacospizza.objetos.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,10 +18,10 @@ import java.util.logging.Logger;
  * @author Luiz
  */
 public class ClienteLogic extends Thread {
-    private String direcao;
     private Cliente cliente;
     private boolean parar = false;
     private LojaController lojaController;
+    
     
     public final Object lock = new Object();
     
@@ -77,6 +80,10 @@ public class ClienteLogic extends Thread {
         }
     }
     
+    public void receberPizza(String tipoPizza, int pedacos) {
+        cliente.adicionarPizza(tipoPizza, pedacos);
+    }
+    
     @Override
     public void run() {
         
@@ -92,8 +99,8 @@ public class ClienteLogic extends Thread {
             }
 
             Mesa.cozinhando.release();
-
-            lojaController.solicitarMesa(quantidade, tipoPizza);
+            
+            lojaController.solicitarMesa(cliente.nome, quantidade, tipoPizza);
         }
     }
     

@@ -33,6 +33,7 @@ public class Mesa extends Thread {
     
     private int quantidadeSolicitada;
     private String tipoPizza;
+    private String nome;
     
     public Mesa(Cozinheiro cozinheiro) {
         pizzas.put("Pizza de Calabresa", new PizzaCalabresa());
@@ -43,11 +44,12 @@ public class Mesa extends Thread {
         this.cozinheiro.start();
     }
     
-    public void solicitarMesa(int quantidadeSolicitada, String tipoPizza) {
+    public void solicitarMesa(String nome, int quantidadeSolicitada, String tipoPizza) {
         
         synchronized(lock) {
             this.quantidadeSolicitada = quantidadeSolicitada;
             this.tipoPizza = tipoPizza;
+            this.nome = nome;
             lock.notify();
         }
     }
@@ -63,13 +65,14 @@ public class Mesa extends Thread {
     public void run() {
         while(true) {
             esperar();
+            
             if(parar) {
                 cozinheiro.parar();
                 break;
             }
             
             Pizza pizzaSolicitada = pizzas.get(tipoPizza);
-            int quantidadeAtual = pizzaSolicitada.getPedaçosRestantes();
+            int quantidadeAtual = pizzaSolicitada.getPedacosRestantes();
 
             if(quantidadeAtual < quantidadeSolicitada) {
                 int quantidadeCozinhar = (quantidadeSolicitada - quantidadeAtual) + 8;
@@ -81,12 +84,12 @@ public class Mesa extends Thread {
                 } catch (InterruptedException ex) {
                     Logger.getLogger(Mesa.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                
                 entregar(pizzaSolicitada, quantidadeSolicitada);
-
+                cozinhando.release();
             }
             else if(quantidadeAtual == quantidadeSolicitada) {
                 entregar(pizzaSolicitada, quantidadeSolicitada);
+                cozinhando.release();
                 cozinheiro.cozinhar(pizzaSolicitada, TAMPIZZA);
             }
             else {
@@ -102,12 +105,12 @@ public class Mesa extends Thread {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
         }
         
+        
         pizza.removerPedacos(pedacos);
         String tipo = pizza.getTipo();
-        int pedacosRestantes = pizza.getPedaçosRestantes();
+        int pedacosRestantes = pizza.getPedacosRestantes();
         
-        LojaController.getInstancia().entregarPizza(tipo, pedacos, pedacosRestantes);
-        cozinhando.release();
+        LojaController.getInstancia().entregarPizza(nome, tipo, pedacos, pedacosRestantes);
     }
     
     public void esperar() {

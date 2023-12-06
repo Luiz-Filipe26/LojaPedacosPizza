@@ -20,7 +20,7 @@ public abstract class Pizza {
     public String getTipo() {
         return tipo;
     }
-    public int getPedaçosRestantes() {
+    public int getPedacosRestantes() {
         return pedacosRestantes;
     }
     public void adicionarPedacos(int pedacos) {

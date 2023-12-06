@@ -30,7 +30,6 @@ public class LojaLogic {
         }
         else if(isBalaoClique(x, y)) {
             lojaController.habilitarPedir();
-            lojaController.desenharTela();
         }
     }
     

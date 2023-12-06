@@ -71,8 +71,8 @@ public class LojaController {
         lojaFXMLController.notificarCozinhando();
     }
     
-    public void solicitarMesa(int quantidadeSolicitada, String tipoPizza) {
-        mesa.solicitarMesa(quantidadeSolicitada, tipoPizza);
+    public void solicitarMesa(String nome, int quantidadeSolicitada, String tipoPizza) {
+        mesa.solicitarMesa(nome, quantidadeSolicitada, tipoPizza);
     }
     
     public void clienteSolicitarPizza(int quantidadeSolicitada, String tipoPizza) {
@@ -81,10 +81,10 @@ public class LojaController {
         clienteLogic.clienteSolicitarPizza(quantidadeSolicitada, tipoPizza);
     }
     
-    public void entregarPizza(String tipoPizza, int pedacos, int pedacosRestantes) {
-        desenho.atualizarPizzas(tipoPizza, pedacos, pedacosRestantes);
-        ClienteLogic clienteLogic = gerenciadorClientes.getClienteLogicAtual();
-        
+    public void entregarPizza(String nome, String tipoPizza, int pedacos, int pedacosRestantes) {
+        desenho.atualizarPizzas(tipoPizza, pedacosRestantes);
+        ClienteLogic clienteLogic = gerenciadorClientes.getClienteLogicPorNome(nome);
+        clienteLogic.receberPizza(tipoPizza, pedacos);
         
         lojaFXMLController.entregarPizza(tipoPizza, pedacos);
     }

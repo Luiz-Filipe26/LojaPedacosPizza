@@ -7,9 +7,11 @@ package com.mycompany.lojapedacospizza.core;
 import com.mycompany.lojapedacospizza.controle.LojaController;
 import com.mycompany.lojapedacospizza.objetos.Area;
 import com.mycompany.lojapedacospizza.objetos.Cliente;
+import com.mycompany.lojapedacospizza.objetos.Pizza;
 import com.mycompany.lojapedacospizza.objetos.Ponto;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.canvas.GraphicsContext;
@@ -66,6 +68,10 @@ public class Desenho {
         limparTela();
         inicializarColecoes();
         desenharTela();
+        
+        pontosPizza.forEach((tipoPizza, v) -> {
+            desenharPizza(tipoPizza, 8);
+        });
     }
     
     public void limparTela() {
@@ -96,10 +102,6 @@ public class Desenho {
         limparAreaClientes();
         desenharMesa();
         
-        pontosPizza.forEach((tipoPizza, v) -> {
-            desenharPizza(tipoPizza, 8);
-        });
-        
         List<Cliente> clientes = lojaController.getClientes();
         if(clientes.isEmpty()) {
             return;
@@ -107,13 +109,41 @@ public class Desenho {
         
         desenharSelecoesCliente(clientes);
         
-        Cliente clienteAtual = lojaController.getCliente();
-        gc.drawImage(clienteImg, clienteAtual.x, altura - clienteAtual.y - clienteImg.getHeight());
+        desenharClienteEPizza();
         
         boolean mostrar = lojaController.checarMostrarBalao();
         if(mostrar) {
             balaoPedir();
         }
+    }
+    
+    public void desenharClienteEPizza() {
+        Cliente clienteAtual = lojaController.getCliente();
+        gc.drawImage(clienteImg, clienteAtual.x, altura - clienteAtual.y - clienteImg.getHeight());
+        
+        
+        Ponto pontoMao = new Ponto(73, 49);
+        Ponto pontoCentroPizza = new Ponto(-273 * 50 / 512, -62 * 50 / 512);
+        Ponto pontoPizza = clienteAtual.getPonto().addPonto(pontoMao).addPonto(pontoCentroPizza);
+        
+        
+        Map<String, Pizza> pizzas = clienteAtual.getPizzas();
+        
+        pizzas.forEach((k, pizza) -> {
+            Image imagemPizza;
+            int dy = 0;
+            
+            for(int i=0; i<pizza.getPedacosRestantes(); i+=8) {
+                if(pizza.getPedacosRestantes() - i >= 8) {
+                    imagemPizza = pedacosImagem.get(8);
+                }
+                else {
+                    imagemPizza = pedacosImagem.get(pizza.getPedacosRestantes() - i);
+                }
+                gc.drawImage(imagemPizza, pontoPizza.x, pontoPizza.y + dy);
+                dy -= 5;
+            }
+        });
     }
     
     public void limparAreaClientes() {
@@ -198,6 +228,7 @@ public class Desenho {
                 break;
         }
         
+        gc.setFont(new Font(12));
         gc.setFill(Color.BLACK);
         gc.fillText(textoPizza1, pontoPizza.x + imagemPizza.getWidth(), pontoPizza.y + 20);
         gc.fillText(textoPizza2, pontoPizza.x + imagemPizza.getWidth(), pontoPizza.y + 40);
@@ -206,7 +237,7 @@ public class Desenho {
         }
     }
 
-    public void atualizarPizzas(String tipo, int pedacos, int pedacosRestantes) {
+    public void atualizarPizzas(String tipo, int pedacosRestantes) {
         desenharPizza(tipo, pedacosRestantes);
     }
 

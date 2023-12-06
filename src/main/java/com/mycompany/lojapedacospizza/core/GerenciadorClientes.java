@@ -44,6 +44,10 @@ public class GerenciadorClientes {
         return clientesPorNome.get(clienteAtual);
     }
     
+    public ClienteLogic getClienteLogicPorNome(String nome) {
+        return clientesPorNome.get(nome);
+    }
+    
     public Cliente getClienteAtual() {
         return clientesPorNome.get(clienteAtual).getCliente();
     }

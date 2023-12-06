@@ -4,6 +4,7 @@
  */
 package com.mycompany.lojapedacospizza.core;
 
+import com.mycompany.lojapedacospizza.core.Mesa;
 import com.mycompany.lojapedacospizza.objetos.Pizza;
 
 import java.util.logging.Level;
@@ -60,7 +61,7 @@ public class Cozinheiro extends Thread {
             }
             
             try {
-                Thread.sleep(1000 * quantidadeCozinhar);
+                Thread.sleep(2000 * quantidadeCozinhar);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Cozinheiro.class.getName()).log(Level.SEVERE, null, ex);
             }

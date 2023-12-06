@@ -22,6 +22,11 @@ public class Ponto {
     	return ponto;
     }
     
+    public Ponto addPonto(Ponto ponto) {
+    	Ponto pontoAdicionado = new Ponto(this.x + ponto.x, this.y + ponto.y);
+    	return pontoAdicionado;
+    }
+    
     @Override
     public String toString() {
         return "(" + x + ", " + y + ")";

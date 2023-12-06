@@ -4,12 +4,16 @@
  */
 package com.mycompany.lojapedacospizza.objetos;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  *
  * @author Luiz
  */
 public class Cliente {
     public String nome;
+    private Map<String, Pizza> pizzas = new HashMap<>();
     public int x;
     public int y;
 
@@ -17,5 +21,40 @@ public class Cliente {
         this.nome = nome;
         this.x = x;
         this.y = y;
+    }
+    
+    public Ponto getPonto() {
+        return new Ponto(x, y);
+    }
+    
+    public void adicionarPizza(String tipoPizza, int pedacos) {
+        if(pizzas.containsKey(tipoPizza)) {
+            pizzas.get(tipoPizza).adicionarPedacos(pedacos);
+            return;
+        }
+        
+        Pizza pizza = null;
+        switch(tipoPizza) {
+            case "Pizza de Calabresa":
+                pizza = new PizzaCalabresa();
+                break;
+            case "Pizza de Frango com Catupiry":
+                pizza = new PizzaFrangoCatupiry();
+                break;
+            case "Pizza Margherita":
+                pizza = new PizzaMargherita();
+                break;
+            case "Pizza Portuguesa":
+                pizza = new PizzaPortuguesa();
+                break;
+        }
+        
+        pizza.adicionarPedacos(pedacos);
+        
+        pizzas.put(tipoPizza, pizza);
+    }
+    
+    public Map<String, Pizza> getPizzas() {
+        return pizzas;
     }
 }
