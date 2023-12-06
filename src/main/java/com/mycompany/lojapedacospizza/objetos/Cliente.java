@@ -36,16 +36,16 @@ public class Cliente {
         Pizza pizza = null;
         switch(tipoPizza) {
             case "Pizza de Calabresa":
-                pizza = new PizzaCalabresa();
+                pizza = new PizzaCalabresa(0);
                 break;
             case "Pizza de Frango com Catupiry":
-                pizza = new PizzaFrangoCatupiry();
+                pizza = new PizzaFrangoCatupiry(0);
                 break;
             case "Pizza Margherita":
-                pizza = new PizzaMargherita();
+                pizza = new PizzaMargherita(0);
                 break;
             case "Pizza Portuguesa":
-                pizza = new PizzaPortuguesa();
+                pizza = new PizzaPortuguesa(0);
                 break;
         }
         

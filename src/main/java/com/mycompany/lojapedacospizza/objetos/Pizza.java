@@ -17,6 +17,10 @@ public abstract class Pizza {
     protected String tipo;
     protected final Object lock = new Object();
     
+    public Pizza(int pedacosRestantes) {
+        this.pedacosRestantes = pedacosRestantes;
+    }
+    
     public String getTipo() {
         return tipo;
     }

@@ -12,9 +12,9 @@ import com.mycompany.lojapedacospizza.core.Mesa;
  */
 public class PizzaMargherita extends Pizza  {
 
-    public PizzaMargherita() {
+    public PizzaMargherita(int pedacosRestantes) {
+        super(pedacosRestantes);
         tipo = "Pizza Margherita";
-        pedacosRestantes = Mesa.TAMPIZZA;
     }
     
 }

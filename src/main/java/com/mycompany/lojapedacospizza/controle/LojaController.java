@@ -82,9 +82,11 @@ public class LojaController {
     }
     
     public void entregarPizza(String nome, String tipoPizza, int pedacos, int pedacosRestantes) {
-        desenho.atualizarPizzas(tipoPizza, pedacosRestantes);
         ClienteLogic clienteLogic = gerenciadorClientes.getClienteLogicPorNome(nome);
         clienteLogic.receberPizza(tipoPizza, pedacos);
+        
+        desenho.atualizarPizzas(tipoPizza, pedacosRestantes);
+        desenho.desenharTela();
         
         lojaFXMLController.entregarPizza(tipoPizza, pedacos);
     }

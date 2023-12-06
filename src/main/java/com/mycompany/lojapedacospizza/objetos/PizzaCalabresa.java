@@ -15,9 +15,9 @@ import java.util.logging.Logger;
  */
 public class PizzaCalabresa extends Pizza {
 
-    public PizzaCalabresa() {
+    public PizzaCalabresa(int pedacosRestantes) {
+        super(pedacosRestantes);
         tipo = "Pizza de Calabresa";
-        pedacosRestantes = Mesa.TAMPIZZA;
     }
     
 }

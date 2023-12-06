@@ -14,7 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
@@ -61,6 +63,7 @@ public class Desenho {
         balaoImg = new Image(getClass().getResourceAsStream("/balao.png"));
         
         this.gc = gc;
+        gc.setGlobalBlendMode(BlendMode.SRC_OVER);
         
         largura = gc.getCanvas().getWidth();
         altura = gc.getCanvas().getHeight();
@@ -71,7 +74,9 @@ public class Desenho {
         
         pontosPizza.forEach((tipoPizza, v) -> {
             desenharPizza(tipoPizza, 8);
+            desenharTextoPizza(tipoPizza);
         });
+        
     }
     
     public void limparTela() {
@@ -97,6 +102,27 @@ public class Desenho {
         }
     }
     
+    private Image cortarImagem(Image imagemOriginal, int x, int y, int dx, int dy) {
+        PixelReader pixelReader = imagemOriginal.getPixelReader();
+        Image imagemCortada = new WritableImage(pixelReader, x, y, dx, dy);
+        return imagemCortada;
+    }
+    
+    private Image redimensionarImagem(Image imagemOriginal, double novaLargura, double novaAltura) {
+        ImageView imageView = new ImageView(imagemOriginal);
+        
+        imageView.setSmooth(true);
+        imageView.setPreserveRatio(true);
+        imageView.setFitWidth(novaLargura);
+        imageView.setFitHeight(novaAltura);
+        
+        SnapshotParameters sp = new SnapshotParameters();
+        sp.setFill(Color.TRANSPARENT);
+        Image imagemRedimensionada = imageView.snapshot(sp, null);
+        
+        return imagemRedimensionada;
+    }
+    
     public void desenharTela() {
         
         limparAreaClientes();
@@ -119,29 +145,27 @@ public class Desenho {
     
     public void desenharClienteEPizza() {
         Cliente clienteAtual = lojaController.getCliente();
-        gc.drawImage(clienteImg, clienteAtual.x, altura - clienteAtual.y - clienteImg.getHeight());
+        int xCliente = clienteAtual.x;
+        int yCliente = (int) (altura - clienteAtual.y - clienteImg.getHeight());
+        gc.drawImage(clienteImg, xCliente, yCliente);
         
         
         Ponto pontoMao = new Ponto(73, 49);
-        Ponto pontoCentroPizza = new Ponto(-273 * 50 / 512, -62 * 50 / 512);
-        Ponto pontoPizza = clienteAtual.getPonto().addPonto(pontoMao).addPonto(pontoCentroPizza);
+        Ponto pontoCentroPizza = new Ponto(-273 * 50 / 512, -262 * 50 / 512);
+        Ponto pontoPizza = new Ponto(xCliente, yCliente).addPonto(pontoMao).addPonto(pontoCentroPizza);
         
         
         Map<String, Pizza> pizzas = clienteAtual.getPizzas();
         
-        pizzas.forEach((k, pizza) -> {
+        final int[] dy = {0};
+        pizzas.forEach((tipoPizza, pizza) -> {
             Image imagemPizza;
-            int dy = 0;
             
             for(int i=0; i<pizza.getPedacosRestantes(); i+=8) {
-                if(pizza.getPedacosRestantes() - i >= 8) {
-                    imagemPizza = pedacosImagem.get(8);
-                }
-                else {
-                    imagemPizza = pedacosImagem.get(pizza.getPedacosRestantes() - i);
-                }
-                gc.drawImage(imagemPizza, pontoPizza.x, pontoPizza.y + dy);
-                dy -= 5;
+                int indiceImagem = Math.min(8, pizza.getPedacosRestantes() - i);
+                imagemPizza = pedacosImagem.get(indiceImagem);
+                gc.drawImage(imagemPizza, pontoPizza.x, pontoPizza.y + dy[0]);
+                dy[0] -= 5;
             }
         });
     }
@@ -167,23 +191,6 @@ public class Desenho {
         }
         gc.setFont(new Font(14));
     }
-    
-    private Image cortarImagem(Image imagemOriginal, int x, int y, int dx, int dy) {
-        PixelReader pixelReader = imagemOriginal.getPixelReader();
-        Image imagemCortada = new WritableImage(pixelReader, x, y, dx, dy);
-        return imagemCortada;
-    }
-    
-    private Image redimensionarImagem(Image imagemOriginal, double novaLargura, double novaAltura) {
-        ImageView imageView = new ImageView(imagemOriginal);
-        imageView.setSmooth(true);
-        imageView.setPreserveRatio(true);
-        imageView.setFitWidth(novaLargura);
-        imageView.setFitHeight(novaAltura);
-        
-        Image imagemRedimensionada = imageView.snapshot(null, null);
-        return imagemRedimensionada;
-    }
 
     public void balaoPedir() {
         Cliente cliente = lojaController.getCliente();
@@ -203,12 +210,18 @@ public class Desenho {
         balaoArea = new Area(x1Clique, y1Clique, x2Clique, y2Clique);
     }
     
-    public void desenharPizza(String tipoPizza, int pedacosRestante) {
+    public void desenharPizza(String tipoPizza, int pedacosRestantes) {
         Ponto pontoPizza = pontosPizza.get(tipoPizza);
-        Image imagemPizza = pedacosImagem.get(pedacosRestante);
+        Image imagemPizza = pedacosImagem.get(pedacosRestantes);
         
+        gc.setFill(Color.WHITE);
+        gc.fillRect(pontoPizza.x, pontoPizza.y, imagemPizza.getWidth(), imagemPizza.getHeight());
         gc.drawImage(imagemPizza, pontoPizza.x, pontoPizza.y);
-        
+    }
+    
+    public void desenharTextoPizza(String tipoPizza) {
+        Ponto pontoPizza = pontosPizza.get(tipoPizza);
+        Image imagemPizza = pedacosImagem.get(1);
         String textoPizza[] =  tipoPizza.split(" ");
         String textoPizza1 = "", textoPizza2 = "", textoPizza3 = "";
         

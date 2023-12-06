@@ -36,10 +36,10 @@ public class Mesa extends Thread {
     private String nome;
     
     public Mesa(Cozinheiro cozinheiro) {
-        pizzas.put("Pizza de Calabresa", new PizzaCalabresa());
-        pizzas.put("Pizza de Frango com Catupiry", new PizzaFrangoCatupiry());
-        pizzas.put("Pizza Margherita", new PizzaMargherita());
-        pizzas.put("Pizza Portuguesa", new PizzaPortuguesa());
+        pizzas.put("Pizza de Calabresa", new PizzaCalabresa(TAMPIZZA));
+        pizzas.put("Pizza de Frango com Catupiry", new PizzaFrangoCatupiry(TAMPIZZA));
+        pizzas.put("Pizza Margherita", new PizzaMargherita(TAMPIZZA));
+        pizzas.put("Pizza Portuguesa", new PizzaPortuguesa(TAMPIZZA));
         this.cozinheiro = cozinheiro;
         this.cozinheiro.start();
     }
