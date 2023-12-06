@@ -2,8 +2,6 @@ package com.mycompany.lojapedacospizza.controle;
 
 import com.mycompany.lojapedacospizza.core.Cozinheiro;
 import com.mycompany.lojapedacospizza.core.Desenho;
-import com.mycompany.lojapedacospizza.core.ClienteLogic;
-import com.mycompany.lojapedacospizza.core.GerenciadorClientes;
 import com.mycompany.lojapedacospizza.core.LojaLogic;
 import com.mycompany.lojapedacospizza.core.Mesa;
 import com.mycompany.lojapedacospizza.view.LojaFXMLController;
@@ -26,7 +24,7 @@ import javafx.scene.input.KeyCode;
  */
 public class App extends Application {
     
-    private LojaController lojaController;
+    private final LojaController lojaController = LojaController.getInstancia();
     private HashSet<KeyCode> teclasValidas;
 
     @Override
@@ -34,14 +32,16 @@ public class App extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/LojaView.fxml"));
         Parent root = fxmlLoader.load();
         
-        lojaController = LojaController.getInstancia();
-        
         LojaFXMLController lojaFXMLController = fxmlLoader.getController();
         lojaController.setFXMLController(lojaFXMLController);
         
         Mesa mesa = new Mesa(Cozinheiro.getInstancia());
         mesa.start();
         lojaController.setMesa(mesa);
+        
+        Cozinheiro cozinheiro = Cozinheiro.getInstancia();
+        lojaController.setCozinheiro(cozinheiro);
+        cozinheiro.start();
         
         GerenciadorClientes gerenciadorClientes = new GerenciadorClientes();
         lojaController.setGerenciadorClientes(gerenciadorClientes);
@@ -65,7 +65,7 @@ public class App extends Application {
 
     public void criarListeners(Stage stage, Scene scene) {
         stage.setOnCloseRequest(e -> {
-            LojaController.getInstancia().viewFechada();
+            lojaController.viewFechada();
             Platform.exit();
         });
         

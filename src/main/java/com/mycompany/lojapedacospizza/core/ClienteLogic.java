@@ -6,10 +6,6 @@ package com.mycompany.lojapedacospizza.core;
 
 import com.mycompany.lojapedacospizza.controle.LojaController;
 import com.mycompany.lojapedacospizza.objetos.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,15 +14,15 @@ import java.util.logging.Logger;
  * @author Luiz
  */
 public class ClienteLogic extends Thread {
-    private Cliente cliente;
+    private final LojaController lojaController = LojaController.getInstancia();
+    private final Cliente cliente;
     private boolean parar = false;
-    private LojaController lojaController;
     
     
     public final Object lock = new Object();
     
     private final int limiteX = 240;
-    private static final int unidadeLargura = 30;
+    private static final int UNIDADELARGURA = 30;
     
     private int quantidade;
     private String tipoPizza;
@@ -34,7 +30,6 @@ public class ClienteLogic extends Thread {
     
     public ClienteLogic(String nome, int x, int y) {
         cliente = new Cliente(nome, x, y);
-        lojaController = LojaController.getInstancia();
     }
     
     public Cliente getCliente() {
@@ -55,13 +50,13 @@ public class ClienteLogic extends Thread {
     public void keyPressed(String keyCode) {
         
         if(keyCode.equals("RIGHT")) {
-            if(cliente.x + unidadeLargura <= limiteX) {
-                cliente.x += unidadeLargura;
+            if(cliente.x + UNIDADELARGURA <= limiteX) {
+                cliente.x += UNIDADELARGURA;
             }
         }
         else {
-            if(cliente.x - unidadeLargura >= unidadeLargura) {
-                cliente.x -= unidadeLargura;
+            if(cliente.x - UNIDADELARGURA >= UNIDADELARGURA) {
+                cliente.x -= UNIDADELARGURA;
             }
         }
         
@@ -93,12 +88,12 @@ public class ClienteLogic extends Thread {
                 break;
             }
             try {
-                Mesa.cozinhando.acquire();
+                Mesa.mesaEsperandoCozinhar.acquire();
             } catch (InterruptedException ex) {
                 Logger.getLogger(ClienteLogic.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            Mesa.cozinhando.release();
+            Mesa.mesaEsperandoCozinhar.release();
             
             lojaController.solicitarMesa(cliente.nome, quantidade, tipoPizza);
         }

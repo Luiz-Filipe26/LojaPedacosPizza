@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.lojapedacospizza.core;
+package com.mycompany.lojapedacospizza.controle;
 
+import com.mycompany.lojapedacospizza.core.ClienteLogic;
 import com.mycompany.lojapedacospizza.objetos.Cliente;
 import java.util.ArrayList;
 import java.util.HashMap;

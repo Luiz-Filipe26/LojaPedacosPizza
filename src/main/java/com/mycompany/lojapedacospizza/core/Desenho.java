@@ -12,8 +12,6 @@ import com.mycompany.lojapedacospizza.objetos.Ponto;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
@@ -30,13 +28,13 @@ import javafx.scene.text.FontWeight;
  * @author Luiz
  */
 public class Desenho {
+    private final LojaController lojaController = LojaController.getInstancia();
     private static Desenho desenho;
-    private GraphicsContext gc;
-    private LojaController lojaController;
+    private final GraphicsContext gc;
     
     
-    private Image clienteImg;
-    private Image balaoImg;
+    private final Image clienteImg;
+    private final Image balaoImg;
     private Area balaoArea;
     
     private double altura;
@@ -58,7 +56,6 @@ public class Desenho {
     }
     
     private Desenho(GraphicsContext gc) {
-        lojaController = LojaController.getInstancia();
         clienteImg = new Image(getClass().getResourceAsStream("/client.png"));
         balaoImg = new Image(getClass().getResourceAsStream("/balao.png"));
         
@@ -223,7 +220,7 @@ public class Desenho {
         Ponto pontoPizza = pontosPizza.get(tipoPizza);
         Image imagemPizza = pedacosImagem.get(1);
         String textoPizza[] =  tipoPizza.split(" ");
-        String textoPizza1 = "", textoPizza2 = "", textoPizza3 = "";
+        String textoPizza1, textoPizza2, textoPizza3 = "";
         
         switch (textoPizza.length) {
             case 2:

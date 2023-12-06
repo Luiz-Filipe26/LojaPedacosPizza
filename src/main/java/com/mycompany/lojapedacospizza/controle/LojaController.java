@@ -6,14 +6,13 @@ package com.mycompany.lojapedacospizza.controle;
 
 import com.mycompany.lojapedacospizza.core.Desenho;
 import com.mycompany.lojapedacospizza.core.ClienteLogic;
-import com.mycompany.lojapedacospizza.core.GerenciadorClientes;
+import com.mycompany.lojapedacospizza.core.Cozinheiro;
 import com.mycompany.lojapedacospizza.core.LojaLogic;
 import com.mycompany.lojapedacospizza.view.LojaFXMLController;
 import com.mycompany.lojapedacospizza.core.Mesa;
 import com.mycompany.lojapedacospizza.objetos.Area;
 import com.mycompany.lojapedacospizza.objetos.Cliente;
-import java.util.ArrayList;
-import java.util.HashMap;
+import com.mycompany.lojapedacospizza.objetos.Pizza;
 import java.util.List;
 
 /**
@@ -28,6 +27,7 @@ public class LojaController {
     private Desenho desenho;
     private Mesa mesa;
     private GerenciadorClientes gerenciadorClientes;
+    private Cozinheiro cozinheiro;
     
     public synchronized static LojaController getInstancia() {
         if(lojaController == null) {
@@ -65,6 +65,10 @@ public class LojaController {
     
     public void setGerenciadorClientes(GerenciadorClientes gerenciadorClientes) {
         this.gerenciadorClientes = gerenciadorClientes;
+    }
+    
+    public void setCozinheiro(Cozinheiro cozinheiro) {
+        this.cozinheiro = cozinheiro;
     }
     
     public void notificarCozinhando() {
@@ -154,5 +158,13 @@ public class LojaController {
     
     public void desabilitarPedir() {
         lojaFXMLController.desabilitarPedir();
+    }
+
+    public void pararCozinheiro() {
+        cozinheiro.parar();
+    }
+
+    public void cozinhar(Pizza pizzaSolicitada, int quantidadeCozinhar) {
+        cozinheiro.cozinhar(pizzaSolicitada, quantidadeCozinhar);
     }
 }

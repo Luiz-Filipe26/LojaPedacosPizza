@@ -22,26 +22,25 @@ import java.util.logging.Logger;
  * @author Luiz
  */
 public class Mesa extends Thread {
+    private final LojaController lojaController = LojaController.getInstancia();
     private Map<String, Pizza> pizzas = new HashMap<>();
-    private Cozinheiro cozinheiro;
-    public static Semaphore cozinhando = new Semaphore(1);
+    public static Semaphore mesaEsperandoCozinhar = new Semaphore(1);
+    public final Object lock;
     
     
     public static final int TAMPIZZA = 8;
     private boolean parar = false;
-    public Object lock = new Object();
     
     private int quantidadeSolicitada;
     private String tipoPizza;
     private String nome;
     
     public Mesa(Cozinheiro cozinheiro) {
+        this.lock = new Object();
         pizzas.put("Pizza de Calabresa", new PizzaCalabresa(TAMPIZZA));
         pizzas.put("Pizza de Frango com Catupiry", new PizzaFrangoCatupiry(TAMPIZZA));
         pizzas.put("Pizza Margherita", new PizzaMargherita(TAMPIZZA));
         pizzas.put("Pizza Portuguesa", new PizzaPortuguesa(TAMPIZZA));
-        this.cozinheiro = cozinheiro;
-        this.cozinheiro.start();
     }
     
     public void solicitarMesa(String nome, int quantidadeSolicitada, String tipoPizza) {
@@ -67,7 +66,7 @@ public class Mesa extends Thread {
             esperar();
             
             if(parar) {
-                cozinheiro.parar();
+                lojaController.pararCozinheiro();
                 break;
             }
             
@@ -77,20 +76,20 @@ public class Mesa extends Thread {
             if(quantidadeAtual < quantidadeSolicitada) {
                 int quantidadeCozinhar = (quantidadeSolicitada - quantidadeAtual) + 8;
 
-                LojaController.getInstancia().notificarCozinhando();
-                cozinheiro.cozinhar(pizzaSolicitada, quantidadeCozinhar);
+                lojaController.notificarCozinhando();
+                lojaController.cozinhar(pizzaSolicitada, quantidadeCozinhar);
                 try {
-                    cozinhando.acquire();
+                    mesaEsperandoCozinhar.acquire();
                 } catch (InterruptedException ex) {
                     Logger.getLogger(Mesa.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 entregar(pizzaSolicitada, quantidadeSolicitada);
-                cozinhando.release();
+                mesaEsperandoCozinhar.release();
             }
             else if(quantidadeAtual == quantidadeSolicitada) {
                 entregar(pizzaSolicitada, quantidadeSolicitada);
-                cozinhando.release();
-                cozinheiro.cozinhar(pizzaSolicitada, TAMPIZZA);
+                mesaEsperandoCozinhar.release();
+                lojaController.cozinhar(pizzaSolicitada, TAMPIZZA);
             }
             else {
                 entregar(pizzaSolicitada, quantidadeSolicitada);
@@ -110,7 +109,7 @@ public class Mesa extends Thread {
         String tipo = pizza.getTipo();
         int pedacosRestantes = pizza.getPedacosRestantes();
         
-        LojaController.getInstancia().entregarPizza(nome, tipo, pedacos, pedacosRestantes);
+        lojaController.entregarPizza(nome, tipo, pedacos, pedacosRestantes);
     }
     
     public void esperar() {

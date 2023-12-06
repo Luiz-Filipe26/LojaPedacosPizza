@@ -9,12 +9,11 @@ import java.util.List;
 
 public class LojaLogic {
     
-    LojaController lojaController;
+    private final LojaController lojaController = LojaController.getInstancia();
     private final int altura;
     private final int clienteAltura;
     
     public LojaLogic() {
-        lojaController = LojaController.getInstancia();
         altura = lojaController.getCanvasAltura();
         clienteAltura = lojaController.getClienteAltura();
     }

@@ -1,8 +1,6 @@
 package com.mycompany.lojapedacospizza.view;
 
 import com.mycompany.lojapedacospizza.controle.LojaController;
-import com.mycompany.lojapedacospizza.core.ClienteLogic;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -26,6 +24,7 @@ public class LojaFXMLController implements Initializable {
     
     @FXML
     private Button buttonPedir;
+    
     @FXML
     private Canvas canvasGrafico;
 
@@ -41,7 +40,7 @@ public class LojaFXMLController implements Initializable {
     @FXML
     private TextField textFieldNome;
     
-    private LojaController lojaController;
+    private final LojaController lojaController = LojaController.getInstancia();
     
 
     @FXML
@@ -123,7 +122,6 @@ public class LojaFXMLController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         buttonPedir.setVisible(false);
-        lojaController = LojaController.getInstancia();
         
         ObservableList<String> listaPizza = FXCollections.observableArrayList(
         "Pizza de Calabresa", "Pizza de Frango com Catupiry", "Pizza Margherita", "Pizza Portuguesa");

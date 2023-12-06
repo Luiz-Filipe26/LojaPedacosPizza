@@ -4,11 +4,6 @@
  */
 package com.mycompany.lojapedacospizza.objetos;
 
-import com.mycompany.lojapedacospizza.core.Mesa;
-import com.mycompany.lojapedacospizza.controle.LojaController;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  *
  * @author Luiz

@@ -4,8 +4,6 @@
  */
 package com.mycompany.lojapedacospizza.objetos;
 
-import com.mycompany.lojapedacospizza.core.Mesa;
-
 /**
  *
  * @author Luiz

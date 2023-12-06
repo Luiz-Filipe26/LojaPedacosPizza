@@ -4,7 +4,6 @@
  */
 package com.mycompany.lojapedacospizza.core;
 
-import com.mycompany.lojapedacospizza.core.Mesa;
 import com.mycompany.lojapedacospizza.objetos.Pizza;
 
 import java.util.logging.Level;
@@ -34,7 +33,7 @@ public class Cozinheiro extends Thread {
     
     public void cozinhar(Pizza pizza, int quantidade) {
         try {
-            Mesa.cozinhando.acquire();
+            Mesa.mesaEsperandoCozinhar.acquire();
         } catch (InterruptedException ex) {
             Logger.getLogger(Cozinheiro.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -67,7 +66,7 @@ public class Cozinheiro extends Thread {
             }
             pizza.adicionarPedacos(quantidadeCozinhar);
             quantidadeCozinhar = 0;
-            Mesa.cozinhando.release();
+            Mesa.mesaEsperandoCozinhar.release();
         }
     }
     
