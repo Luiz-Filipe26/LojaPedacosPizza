@@ -51,6 +51,9 @@ public class LojaLogic {
         else if(isBalaoClique(x, y)) {
             lojaController.habilitarPedir();
         }
+        else if(isBalaoComerClique(x, y)) {
+            lojaController.comer();
+        }
     }
     
     public String clienteClicado(List<Cliente> clientes, int x, int y) {
@@ -70,5 +73,10 @@ public class LojaLogic {
     public boolean isBalaoClique(int x, int y) {
         Area balaoArea = lojaController.getBalaoArea();
         return balaoArea != null && x >= balaoArea.x1 && x <= balaoArea.x2 && y >= balaoArea.y1 && y<=balaoArea.y2;
+    }
+
+    private boolean isBalaoComerClique(int x, int y) {
+        Area balaoComerArea = lojaController.getBalaoComerArea();
+        return balaoComerArea != null && x >= balaoComerArea.x1 && x <= balaoComerArea.x2 && y >= balaoComerArea.y1 && y<=balaoComerArea.y2;
     }
 }

@@ -118,8 +118,8 @@ public class LojaController {
         desenho.desenharTela();
     }
 
-    public void balaoPedir() {
-        desenho.balaoPedir();
+    public void desenharBalaoPedir() {
+        desenho.desenharBalaoPedir();
     }
 
     public void mouseClique(int x, int y) {
@@ -134,8 +134,8 @@ public class LojaController {
         lojaFXMLController.habilitarPedir();
     }
     
-    public boolean checarMostrarBalao() {
-        return gerenciadorClientes.getClienteLogicAtual().checarMostrarBalao();
+    public boolean checarMostrarBalaoPedir() {
+        return gerenciadorClientes.getClienteLogicAtual().checarMostrarPedir();
     }
 
     public int getCanvasAltura() {
@@ -147,7 +147,7 @@ public class LojaController {
     }
     
     public Area getBalaoArea() {
-        return desenho.getBalaoArea();
+        return desenho.getBalaoPedirArea();
     }
 
     public boolean nomeExiste(String nome) {
@@ -164,5 +164,22 @@ public class LojaController {
 
     public void cozinhar(Pizza pizzaSolicitada, int quantidadeCozinhar) {
         cozinheiro.cozinhar(pizzaSolicitada, quantidadeCozinhar);
+    }
+
+    public void desenharBalaoComer() {
+        desenho.balaoComer();
+    }
+
+    public Area getBalaoComerArea() {
+        return desenho.getBalaoComerArea();
+    }
+
+    public void comer() {
+        gerenciadorClientes.getClienteLogicAtual().comer();
+        desenho.desenharTela();
+    }
+
+    public boolean checarMostrarBalaoComer() {
+        return gerenciadorClientes.getClienteLogicAtual().checarMostrarBalaoComer();
     }
 }

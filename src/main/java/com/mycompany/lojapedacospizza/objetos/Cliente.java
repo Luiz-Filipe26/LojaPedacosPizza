@@ -4,7 +4,9 @@
  */
 package com.mycompany.lojapedacospizza.objetos;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,6 +27,18 @@ public class Cliente {
     
     public Ponto getPonto() {
         return new Ponto(x, y);
+    }
+    
+    public void comer() {
+        List<String> tiposDePizza = new ArrayList<>(pizzas.keySet());
+        String ultimaPizza = tiposDePizza.get(tiposDePizza.size() - 1);
+        
+        if(pizzas.get(ultimaPizza).getPedacosRestantes() == 1) {
+            pizzas.remove(ultimaPizza);
+        }
+        else {
+            pizzas.get(ultimaPizza).removerPedacos(1);
+        }
     }
     
     public void adicionarPizza(String tipoPizza, int pedacos) {

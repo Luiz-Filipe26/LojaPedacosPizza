@@ -35,7 +35,9 @@ public class Desenho {
     
     private final Image clienteImg;
     private final Image balaoImg;
-    private Area balaoArea;
+    private final Image cadeira;
+    private Area balaoPedirArea;
+    private Area balaoComerArea;
     
     private double altura;
     private double largura;
@@ -58,6 +60,9 @@ public class Desenho {
     private Desenho(GraphicsContext gc) {
         clienteImg = new Image(getClass().getResourceAsStream("/client.png"));
         balaoImg = new Image(getClass().getResourceAsStream("/balao.png"));
+        
+        Image cadeiraOriginal =  new Image(getClass().getResourceAsStream("/cadeira.png"));
+        cadeira = redimensionarImagem(cadeiraOriginal, 160, 320);
         
         this.gc = gc;
         gc.setGlobalBlendMode(BlendMode.SRC_OVER);
@@ -123,6 +128,9 @@ public class Desenho {
     public void desenharTela() {
         
         limparAreaClientes();
+        
+        gc.drawImage(cadeira, 90, altura - 35 - cadeira.getHeight() - 25);
+        
         desenharMesa();
         
         List<Cliente> clientes = lojaController.getClientes();
@@ -134,9 +142,13 @@ public class Desenho {
         
         desenharClienteEPizza();
         
-        boolean mostrar = lojaController.checarMostrarBalao();
-        if(mostrar) {
-            balaoPedir();
+        boolean mostrarBalaoPedir = lojaController.checarMostrarBalaoPedir();
+        if(mostrarBalaoPedir) {
+            desenharBalaoPedir();
+        }
+        boolean mostrarBalaoComer = lojaController.checarMostrarBalaoComer();
+        if(mostrarBalaoComer) {
+            balaoComer();
         }
     }
     
@@ -189,7 +201,7 @@ public class Desenho {
         gc.setFont(new Font(14));
     }
 
-    public void balaoPedir() {
+    public void desenharBalaoPedir() {
         Cliente cliente = lojaController.getCliente();
         double x = cliente.x + 20;
         double y = (altura - cliente.y) - clienteImg.getHeight() - balaoImg.getHeight();
@@ -204,7 +216,7 @@ public class Desenho {
         int x2Clique = x1Clique + 40;
         int y2Clique = y1Clique + 30;
         
-        balaoArea = new Area(x1Clique, y1Clique, x2Clique, y2Clique);
+        balaoPedirArea = new Area(x1Clique, y1Clique, x2Clique, y2Clique);
     }
     
     public void desenharPizza(String tipoPizza, int pedacosRestantes) {
@@ -259,8 +271,30 @@ public class Desenho {
         return (int) clienteImg.getHeight();
     }
 
-    public Area getBalaoArea() {
-        return balaoArea;
+    public Area getBalaoPedirArea() {
+        return balaoPedirArea;
+    }
+
+    public void balaoComer() {
+        Cliente cliente = lojaController.getCliente();
+        double x = cliente.x + 20;
+        double y = (altura - cliente.y) - clienteImg.getHeight() - balaoImg.getHeight();
+        
+        gc.drawImage(balaoImg, x, y);
+        gc.setFill(Color.BLACK);
+        gc.fillText("Comer", (x + balaoImg.getWidth() / 2) - 15, (y + balaoImg.getWidth() / 2));
+        
+        int x1Clique = (int) x + 10;
+        int y1Clique = (int) y + 10;
+        
+        int x2Clique = x1Clique + 40;
+        int y2Clique = y1Clique + 30;
+        
+        balaoComerArea = new Area(x1Clique, y1Clique, x2Clique, y2Clique);
+    }
+
+    public Area getBalaoComerArea() {
+        return balaoComerArea;
     }
     
 }

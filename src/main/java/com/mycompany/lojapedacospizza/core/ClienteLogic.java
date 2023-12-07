@@ -22,6 +22,7 @@ public class ClienteLogic extends Thread {
     public final Object lock = new Object();
     
     private final int limiteX = 240;
+    private final int posCadeira = 90;
     private static final int UNIDADELARGURA = 30;
     
     private int quantidade;
@@ -43,12 +44,29 @@ public class ClienteLogic extends Thread {
         }
     }
     
-    public boolean checarMostrarBalao() {
+    public boolean checarMostrarPedir() {
         return (cliente.x == limiteX);
+    }
+
+    public boolean checarMostrarBalaoComer() {
+        return cliente.x == posCadeira;
     }
     
     public void keyPressed(String keyCode) {
         
+        moverSePuder(keyCode);
+        
+        lojaController.desenharCliente(cliente);
+        
+        if(cliente.x == limiteX) {
+            lojaController.desenharBalaoPedir();
+        }
+        else if(cliente.x == posCadeira) {
+            lojaController.desenharBalaoComer();
+        }
+    }
+    
+    public void moverSePuder(String keyCode) {
         if(keyCode.equals("RIGHT")) {
             if(cliente.x + UNIDADELARGURA <= limiteX) {
                 cliente.x += UNIDADELARGURA;
@@ -58,12 +76,6 @@ public class ClienteLogic extends Thread {
             if(cliente.x - UNIDADELARGURA >= UNIDADELARGURA) {
                 cliente.x -= UNIDADELARGURA;
             }
-        }
-        
-        lojaController.desenharCliente(cliente);
-        
-        if(cliente.x == limiteX) {
-            lojaController.balaoPedir();
         }
     }
     
@@ -107,5 +119,9 @@ public class ClienteLogic extends Thread {
                 Logger.getLogger(Mesa.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+
+    public void comer() {
+        cliente.comer();
     }
 }
