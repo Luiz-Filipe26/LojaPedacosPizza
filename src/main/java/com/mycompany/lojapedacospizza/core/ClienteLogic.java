@@ -59,10 +59,10 @@ public class ClienteLogic extends Thread {
         lojaController.desenharCliente(cliente);
         
         if(cliente.x == limiteX) {
-            lojaController.desenharBalaoPedir();
+            lojaController.desenharBalao("Pedir");
         }
         else if(cliente.x == posCadeira) {
-            lojaController.desenharBalaoComer();
+            lojaController.desenharBalao("Comer");
         }
     }
     

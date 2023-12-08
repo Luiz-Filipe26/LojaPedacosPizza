@@ -32,6 +32,16 @@ public class Desenho {
     private static Desenho desenho;
     private final GraphicsContext gc;
     
+    private final Ponto pontoCadeira;
+    private final Ponto primeiroPontoPizza;
+    private final Ponto pontoMao;
+    private final Ponto pontoCentroPizza;
+    private final Area areaMesa;
+    private final Area areaClientes;
+    
+    private final Font nomeFonte = Font.font("Segoe UI", FontWeight.BOLD, 20);
+    private final Font pizzaFonte = new Font(12);
+    private final Font fonteBalao = new Font(14);
     
     private final Image clienteImg;
     private final Image balaoImg;
@@ -58,24 +68,31 @@ public class Desenho {
     }
     
     private Desenho(GraphicsContext gc) {
+        this.gc = gc;
+        largura = gc.getCanvas().getWidth();
+        altura = gc.getCanvas().getHeight();
+        
         clienteImg = new Image(getClass().getResourceAsStream("/client.png"));
         balaoImg = new Image(getClass().getResourceAsStream("/balao.png"));
         
+        primeiroPontoPizza = new Ponto(360, (int) altura - 80);
+        pontoMao = new Ponto(73, 49);
+        pontoCentroPizza = new Ponto(-273 * 50 / 512, -262 * 50 / 512);
+        areaMesa = new Area(320, 30, 30, (int) altura - 60);
+        areaClientes = new Area(0, 0, 350, (int) altura);
+        
         Image cadeiraOriginal =  new Image(getClass().getResourceAsStream("/cadeira.png"));
-        cadeira = redimensionarImagem(cadeiraOriginal, 160, 320);
+        cadeira = redimensionarImagem(cadeiraOriginal, cadeiraOriginal.getWidth(), 160);
+        pontoCadeira = new Ponto((int) (90 - (clienteImg.getWidth() / 2)), (int) (altura - 35 - cadeira.getHeight() - 25));
         
-        this.gc = gc;
-        gc.setGlobalBlendMode(BlendMode.SRC_OVER);
         
-        largura = gc.getCanvas().getWidth();
-        altura = gc.getCanvas().getHeight();
         
         limparTela();
         inicializarColecoes();
         desenharTela();
         
         pontosPizza.forEach((tipoPizza, v) -> {
-            desenharPizza(tipoPizza, 8);
+            desenharPizza(tipoPizza, Mesa.TAMPIZZA);
             desenharTextoPizza(tipoPizza);
         });
         
@@ -88,15 +105,14 @@ public class Desenho {
     
     public void inicializarColecoes() {
         
-        Ponto primeiroPonto = new Ponto(360, (int) altura - 80);
-        pontosPizza.put("Pizza de Calabresa", primeiroPonto);
-        pontosPizza.put("Pizza de Frango com Catupiry", primeiroPonto.add(0, -60));
-        pontosPizza.put("Pizza Margherita", primeiroPonto.add(0, -120));
-        pontosPizza.put("Pizza Portuguesa", primeiroPonto.add(0, -180));
+        pontosPizza.put("Pizza de Calabresa", primeiroPontoPizza);
+        pontosPizza.put("Pizza de Frango com Catupiry", primeiroPontoPizza.add(0, -60));
+        pontosPizza.put("Pizza Margherita", primeiroPontoPizza.add(0, -120));
+        pontosPizza.put("Pizza Portuguesa", primeiroPontoPizza.add(0, -180));
         
         Image imagemTotal = new Image(getClass().getResourceAsStream("/pizza_sprites.png"));
         
-        for(int i=0; i<8; i++) {
+        for(int i=0; i<Mesa.TAMPIZZA; i++) {
             Image subImagem = cortarImagem(imagemTotal, (i % 3) * 512, (i/3) * 512, 512, 512);
             Image imagemRedimensionada = redimensionarImagem(subImagem, 50, 50);
             
@@ -129,7 +145,7 @@ public class Desenho {
         
         limparAreaClientes();
         
-        gc.drawImage(cadeira, 90, altura - 35 - cadeira.getHeight() - 25);
+        gc.drawImage(cadeira, pontoCadeira.x, pontoCadeira.y);
         
         desenharMesa();
         
@@ -144,11 +160,11 @@ public class Desenho {
         
         boolean mostrarBalaoPedir = lojaController.checarMostrarBalaoPedir();
         if(mostrarBalaoPedir) {
-            desenharBalaoPedir();
+            desenharBalao("Pedir");
         }
         boolean mostrarBalaoComer = lojaController.checarMostrarBalaoComer();
         if(mostrarBalaoComer) {
-            balaoComer();
+            desenharBalao("Comer");
         }
     }
     
@@ -158,11 +174,7 @@ public class Desenho {
         int yCliente = (int) (altura - clienteAtual.y - clienteImg.getHeight());
         gc.drawImage(clienteImg, xCliente, yCliente);
         
-        
-        Ponto pontoMao = new Ponto(73, 49);
-        Ponto pontoCentroPizza = new Ponto(-273 * 50 / 512, -262 * 50 / 512);
         Ponto pontoPizza = new Ponto(xCliente, yCliente).addPonto(pontoMao).addPonto(pontoCentroPizza);
-        
         
         Map<String, Pizza> pizzas = clienteAtual.getPizzas();
         
@@ -170,8 +182,8 @@ public class Desenho {
         pizzas.forEach((tipoPizza, pizza) -> {
             Image imagemPizza;
             
-            for(int i=0; i<pizza.getPedacosRestantes(); i+=8) {
-                int indiceImagem = Math.min(8, pizza.getPedacosRestantes() - i);
+            for(int i=0; i<pizza.getPedacosRestantes(); i+=Mesa.TAMPIZZA) {
+                int indiceImagem = Math.min(Mesa.TAMPIZZA, pizza.getPedacosRestantes() - i);
                 imagemPizza = pedacosImagem.get(indiceImagem);
                 gc.drawImage(imagemPizza, pontoPizza.x, pontoPizza.y + dy[0]);
                 dy[0] -= 5;
@@ -181,42 +193,23 @@ public class Desenho {
     
     public void limparAreaClientes() {
         gc.setFill(Color.WHITE);
-        gc.fillRect(0, 0, 350, altura);
+        gc.fillRect(areaClientes.x1, areaClientes.y1, areaClientes.x2, areaClientes.y2);
     }
     
     public void desenharMesa() {
         gc.setFill(Color.YELLOW);
-        gc.fillRect(320, 30, 30, altura - 60);
+        gc.fillRect(areaMesa.x1, areaMesa.y1, areaMesa.x2, areaMesa.y2);
     }
     
     public void desenharSelecoesCliente(List<Cliente> clientes) {
         
-        gc.setFont(Font.font("Segoe UI", FontWeight.BOLD, 20));
+        gc.setFont(nomeFonte);
         for(Cliente cliente : clientes) {
             gc.setFill(Color.BLUE);
             gc.fillRect(10, altura - (cliente.y + clienteImg.getHeight() / 2), 20, 20);
             gc.setFill(Color.BLACK);
             gc.fillText(cliente.nome, 6, altura - (cliente.y + clienteImg.getHeight() / 2) + 25);
         }
-        gc.setFont(new Font(14));
-    }
-
-    public void desenharBalaoPedir() {
-        Cliente cliente = lojaController.getCliente();
-        double x = cliente.x + 20;
-        double y = (altura - cliente.y) - clienteImg.getHeight() - balaoImg.getHeight();
-        
-        gc.drawImage(balaoImg, x, y);
-        gc.setFill(Color.BLACK);
-        gc.fillText("Pedir", (x + balaoImg.getWidth() / 2) - 15, (y + balaoImg.getWidth() / 2));
-        
-        int x1Clique = (int) x + 10;
-        int y1Clique = (int) y + 10;
-        
-        int x2Clique = x1Clique + 40;
-        int y2Clique = y1Clique + 30;
-        
-        balaoPedirArea = new Area(x1Clique, y1Clique, x2Clique, y2Clique);
     }
     
     public void desenharPizza(String tipoPizza, int pedacosRestantes) {
@@ -250,7 +243,7 @@ public class Desenho {
                 break;
         }
         
-        gc.setFont(new Font(12));
+        gc.setFont(pizzaFonte);
         gc.setFill(Color.BLACK);
         gc.fillText(textoPizza1, pontoPizza.x + imagemPizza.getWidth(), pontoPizza.y + 20);
         gc.fillText(textoPizza2, pontoPizza.x + imagemPizza.getWidth(), pontoPizza.y + 40);
@@ -275,14 +268,15 @@ public class Desenho {
         return balaoPedirArea;
     }
 
-    public void balaoComer() {
+    public void desenharBalao(String texto) {
         Cliente cliente = lojaController.getCliente();
         double x = cliente.x + 20;
         double y = (altura - cliente.y) - clienteImg.getHeight() - balaoImg.getHeight();
         
         gc.drawImage(balaoImg, x, y);
         gc.setFill(Color.BLACK);
-        gc.fillText("Comer", (x + balaoImg.getWidth() / 2) - 15, (y + balaoImg.getWidth() / 2));
+        gc.setFont(fonteBalao);
+        gc.fillText(texto, (x + balaoImg.getWidth() / 2) - 15, (y + balaoImg.getWidth() / 2));
         
         int x1Clique = (int) x + 10;
         int y1Clique = (int) y + 10;
@@ -290,7 +284,12 @@ public class Desenho {
         int x2Clique = x1Clique + 40;
         int y2Clique = y1Clique + 30;
         
-        balaoComerArea = new Area(x1Clique, y1Clique, x2Clique, y2Clique);
+        if(texto.equals("Pedir")) {
+            balaoPedirArea = new Area(x1Clique, y1Clique, x2Clique, y2Clique);
+        }
+        else {
+            balaoComerArea = new Area(x1Clique, y1Clique, x2Clique, y2Clique);
+        }
     }
 
     public Area getBalaoComerArea() {

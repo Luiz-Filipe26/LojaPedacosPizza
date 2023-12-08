@@ -74,7 +74,7 @@ public class Mesa extends Thread {
             int quantidadeAtual = pizzaSolicitada.getPedacosRestantes();
 
             if(quantidadeAtual < quantidadeSolicitada) {
-                int quantidadeCozinhar = (quantidadeSolicitada - quantidadeAtual) + 8;
+                int quantidadeCozinhar = (quantidadeSolicitada - quantidadeAtual) + Mesa.TAMPIZZA;
 
                 lojaController.notificarCozinhando();
                 lojaController.cozinhar(pizzaSolicitada, quantidadeCozinhar);

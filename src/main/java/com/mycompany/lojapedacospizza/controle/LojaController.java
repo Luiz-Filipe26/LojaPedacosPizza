@@ -118,8 +118,8 @@ public class LojaController {
         desenho.desenharTela();
     }
 
-    public void desenharBalaoPedir() {
-        desenho.desenharBalaoPedir();
+    public void desenharBalao(String texto) {
+        desenho.desenharBalao(texto);
     }
 
     public void mouseClique(int x, int y) {
@@ -164,10 +164,6 @@ public class LojaController {
 
     public void cozinhar(Pizza pizzaSolicitada, int quantidadeCozinhar) {
         cozinheiro.cozinhar(pizzaSolicitada, quantidadeCozinhar);
-    }
-
-    public void desenharBalaoComer() {
-        desenho.balaoComer();
     }
 
     public Area getBalaoComerArea() {
